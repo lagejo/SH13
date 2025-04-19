@@ -134,6 +134,7 @@ sendMessageToServer(gServerIpAddress,gServerPort,sendBuffer);
 Ce code envoie un message au format "C [IP client] [Port client] [Nom]" au serveur, ce qui permet d'identifier le joueur et d'établir la connexion.
 
 ### Envoi des actions au serveur
+
 J'ai implémenté trois types d'actions que le joueur peut effectuer pendant son tour :
 
 **Accusation (G)** : Quand le joueur accuse un suspect d'être le coupable :
@@ -190,6 +191,7 @@ Cette partie est importante car elle permet d'activer le bouton "Go" uniquement 
 ```c
 int result;
 sscanf(gbuffer,"V %d %d %d ", &i, &j, &result);
+// vérifie que la case est bien vide ou *
 if (tableCartes[i][j]==-1 || tableCartes[i][j]==100) tableCartes[i][j]=result;
 ```
 

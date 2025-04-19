@@ -282,8 +282,8 @@ int main(int argc, char ** argv)
 					}
 					else if ((objetSel!=-1) && (joueurSel==-1))
 					{
-						//Première action => interroge les joueurs sur un symbole, ils lèvent la main s’ils possèdent ce symbole. 
-						//La quantité de symboles possédés n’est pas précisée
+						//Première action => interroge les joueurs sur un symbole 
+						//La quantite de symboles n’est pas precisee
 						sprintf(sendBuffer,"O %d %d",gId, objetSel);
 
 						// RAJOUTER DU CODE ICI
@@ -294,8 +294,8 @@ int main(int argc, char ** argv)
 					}
 					else if ((objetSel!=-1) && (joueurSel!=-1))
 					{
-						//Deuxième action => interroge un joueur au sujet d’un symbole en particulier
-						//Le joueur interrogé devra indiquer en quelle quantité il possède ce symbole
+						//Deuxieme action => interroge un joueur au sujet d’un symbole en particulier
+						//Le joueur interroge devra indiquer en quelle quantite il a ce symbole
 						sprintf(sendBuffer,"S %d %d %d",gId, joueurSel,objetSel);
 
 						// RAJOUTER DU CODE ICI
@@ -328,21 +328,20 @@ int main(int argc, char ** argv)
 			// Message 'I' : le joueur recoit son Id
 			case 'I':
 				// RAJOUTER DU CODE ICI
-				sscanf(gbuffer,"I %d", &gId);  // recupere la partie entiere de gbuffer
+				 // recupere la partie entiere de gbuffer
+				sscanf(gbuffer,"I %d", &gId); 
 
 				break;
 			// Message 'L' : le joueur recoit la liste des joueurs
 			case 'L':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"L %s %s %s %s", gNames[0], gNames[1], gNames[2], gNames[3]);
-				// printf("Joueurs connectés : %s %s %s %s \n", gNames[0], gNames[1], gNames[2], gNames[3]);	 // Affiche la liste en sautant 'L'
 
 				break;
 			// Message 'D' : le joueur recoit ses trois cartes
 			case 'D':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"D %d %d %d", &b[0], &b[1], &b[2]);
-				// printf("Vos cartes : %d %d %d \n",b[0], b[1],b[2]);
 
 				break;
 			// Message 'M' : le joueur recoit le n° du joueur courant
@@ -350,14 +349,16 @@ int main(int argc, char ** argv)
 			case 'M':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"M %d", &id);
-				goEnabled = (id == gId) ? 1 : 0; //goEnabled vaudra 1 si c'est au joueur de jouer 0 sinon
+				// goEnabled vaudra 1 si c'est au joueur de jouer 0 sinon
+				goEnabled = (id == gId) ? 1 : 0; 
 				break;
 			// Message 'V' : le joueur recoit une valeur de tableCartes
 			case 'V':
 				// RAJOUTER DU CODE ICI
 				int result;
 				sscanf(gbuffer,"V %d %d %d ", &i, &j, &result); 
-				//A completer
+
+				// vérifie que la case est bien vide ou *
 				if (tableCartes[i][j]==-1 || tableCartes[i][j]==100) tableCartes[i][j]=result;
 
 				break;

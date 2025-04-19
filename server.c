@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
 		{
                 	case 'G'://guilty
 				// RAJOUTER DU CODE ICI
-				sscanf(buffer,"G %d %d", &id, &i);//on récupère le joueur qui fait l'accusation et son accusation
+				sscanf(buffer,"G %d %d", &id, &i);//on recupere le joueur qui fait l'accusation et son accusation
 
 				//L'accusation s'avere vraie 
 				if(i == deck[12])
@@ -385,12 +385,12 @@ int main(int argc, char *argv[])
 					broadcastMessage(reply);
 
 					joueurCourant++;
-					// mise à jour de joueurCourant
+					// mise a jour de joueurCourant
 					if(joueurCourant == 4){
 					  joueurCourant = 0;
 					}
 		
-					sprintf(reply,"M %d", joueurCourant); //annonce du joueur à qui c'est le tour
+					sprintf(reply,"M %d", joueurCourant); //annonce du joueur a qui c'est le tour
 					broadcastMessage(reply);
 				}
 
@@ -416,7 +416,7 @@ int main(int argc, char *argv[])
 					}
 					
 					joueurCourant++;
-					// mise à jour de joueurCourant
+					// mise a jour de joueurCourant
 					if(joueurCourant == 4){
 					  joueurCourant = 0;
 					}
@@ -427,14 +427,14 @@ int main(int argc, char *argv[])
 			case 'S':
 				// RAJOUTER DU CODE ICI
 				int objet;
-				// Solo, un joueur demandé à un seul joueur un symbole
+				// Solo, un joueur demande a un seul joueur un symbole
 				sscanf(buffer,"S %d %d %d", &id, &i, &objet);
 				
 				sprintf(reply, "V %d %d %d", i, objet, tableCartes[i][objet]);
 				broadcastMessage(reply);
 
 				joueurCourant++;
-				// mise à jour de joueurCourant
+				// mise a jour de joueurCourant
 				if(joueurCourant == 4){
 				  joueurCourant = 0;
 				}
