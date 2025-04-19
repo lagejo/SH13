@@ -426,36 +426,25 @@ int main(int argc, char *argv[])
 				break;
 			case 'S':
 				// RAJOUTER DU CODE ICI
-				//qqn a demandé qui avait des symboles particuliers
-				sscanf(buffer,"O %d %d", &id, &i);//on récupère le joueur qui fait la demande et sa demande
+				int objet;
+				// Solo, un joueur demandé à un seul joueur un symbole
+				sscanf(buffer,"S %d %d %d", &id, &i, &objet);
 				
-				// Parcourir tous les differents 
-				for(int j=0; j<4; j++)
-				{	//Si c'est le joueur qui joue, on ne fait rien
-					if(j==id);
-					else 
-					{
-						if(tableCartes[j][i]==0)
-							// afficher la colonne de tableCartes correspondant au symbole 
-							sprintf(reply,"V %d %d 0", j, i);
-						else
-							sprintf(reply,"V %d %d 100", j, i);
-					}
-					broadcastMessage(reply);
-					// Mise à jour du tableau dans l'interface graphique 
-					
+				sprintf(reply, "V %d %d %d", i, objet, tableCartes[i][objet]);
+				broadcastMessage(reply);
+
+				joueurCourant++;
+				// mise à jour de joueurCourant
+				if(joueurCourant == 4){
+				  joueurCourant = 0;
 				}
 
-				//mise à jour de joueurCourant
-				if(joueurCourant++ == 3)
-					joueurCourant=0;
-				
-				//On annonce du joueur à qui c'est le tour
+				// annonce le prochain joueur
 				sprintf(reply,"M %d",joueurCourant);
 				broadcastMessage(reply);
 				break;
-                	default:
-                        	break;
+			default:
+				break;
 		}
         }
      	close(newsockfd);

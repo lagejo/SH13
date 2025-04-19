@@ -1,7 +1,7 @@
 # Rapport - Projet OS User
 
 Ce rapport donne des explications sur la complétion des différentes parties (serveur et client) ainsi que sur les notions abordées en TP. 
-
+J'y ai mis des extraits de mon codes, que j'ai expliqués.
 Il y a également à la fin quelques explications sur le makefile que j'ai réalisé.
 
 ## Complétion du code de server.c
@@ -26,7 +26,7 @@ Ce code envoie d'abord un message "D" (pour Distribution) contenant les 3 indice
 Ensuite, pour chacune des 8 caractéristiques du jeu, il envoie un message "V" (pour Valeur) avec les informations du tableau correspondant. 
 J'ai répété ce processus pour chaque joueur, en adaptant les indices.
 
-Pour terminer l'initialisation, j'ai annoncé à tous les joueurs quel est le joueur courant :
+Pour terminer l'initialisation, j'annonce à tous les joueurs quel est le joueur courant :
 
 ```c
 sprintf(reply,"M %d", joueurCourant);
@@ -63,8 +63,31 @@ else
 Le serveur vérifie si l'accusation est correcte (correspond à la 13ème carte). Si c'est le cas, le joueur gagne et la partie se termine. Sinon, il est éliminé et c'est au tour du joueur suivant.
 
 **Question générale (O)** : Un joueur demande qui possède un certain symbole. Le code parcourt tous les joueurs et envoie les informations correspondantes.
+```c
+sscanf(buffer, "O %d %d", &id, &n);
+
+// parcourir les clients
+for (i = 0 ; i < 4 ; i++) {
+    if (i != id) {
+        if (tableCartes[i][n] > 0) {
+            sprintf(reply, "V %d %d 100", i, n);
+        }
+        else {
+            sprintf(reply, "V %d %d 0", i, n);
+        }
+        broadcastMessage(reply);
+    }
+}
+```
 
 **Question ciblée (S)** : Similaire à la question générale, mais pour une caractéristique spécifique.
+```c
+int objet;
+// Solo, un joueur demandé à un seul joueur un symbole
+sscanf(buffer,"S %d %d %d", &id, &i, &objet);
+
+sprintf(reply, "V %d %d %d", i, objet, tableCartes[i][objet]);
+```
 
 ### Utilisation des sockets
 
@@ -95,9 +118,12 @@ Cette approche permet de gérer séquentiellement les actions sans avoir besoin 
 
 ## Complétion du code de sh13.c
 
-Pour compléter le code du client, j'ai dû implémenter plusieurs fonctionnalités pour permettre la communication avec le serveur et le bon déroulement du jeu Sherlock Holmes 13.
+Pour compléter le code du client, j'ai dû implémenter plusieurs fonctionnalités pour permettre la communication avec le serveur et le bon déroulement du jeu.
 
 ### Connexion au serveur
+
+L'initialisation du serveur s'affectue avec un numéro de port passé en argument au lancement. Un socket est créé (`sockfd = socket(AF_INET, SOCK_STREAM, 0);`)
+puis il y a un `bind()` pour attacher la socket à l'adresse et au port donnés, puis on commence à écouter (`listen()`).
 
 Au démarrage, le client doit se connecter au serveur. J'ai implémenté cette fonctionnalité quand l'utilisateur clique sur le bouton "Connect" :
 
@@ -107,16 +133,16 @@ sendMessageToServer(gServerIpAddress,gServerPort,sendBuffer);
 ```
 Ce code envoie un message au format "C [IP client] [Port client] [Nom]" au serveur, ce qui permet d'identifier le joueur et d'établir la connexion.
 
-Envoi des actions au serveur
+### Envoi des actions au serveur
 J'ai implémenté trois types d'actions que le joueur peut effectuer pendant son tour :
 
-Accusation (G) : Quand le joueur accuse un suspect d'être le coupable :
+**Accusation (G)** : Quand le joueur accuse un suspect d'être le coupable :
 
 ```c
 sprintf(sendBuffer,"G %d %d",gId, guiltSel);
 sendMessageToServer(gServerIpAddress, gServerPort, sendBuffer);
 ```
-Question générale (O) : Quand le joueur interroge tous les joueurs sur un symbole :
+**Question générale (O)** : Quand le joueur interroge tous les joueurs sur un symbole :
 
 ```c
 sprintf(sendBuffer,"O %d %d",gId, objetSel);
@@ -124,7 +150,7 @@ sendMessageToServer(gServerIpAddress, gServerPort, sendBuffer);
 goEnabled = 0;
 ```
 
-Question ciblée (S) : Quand le joueur interroge un joueur spécifique sur un symbole :
+**Question ciblée (S)** : Quand le joueur interroge un joueur spécifique sur un symbole :
 
 ```c
 sprintf(sendBuffer,"S %d %d %d",gId, joueurSel,objetSel);
@@ -138,29 +164,29 @@ Dans chaque cas, j'utilise la fonction `sendMessageToServer()` pour envoyer les 
 ### Traitement des messages du serveur
 Pour traiter les messages reçus du serveur, j'ai implémenté cinq types de réponses :
 
-1. Message 'I' : Le joueur reçoit son identifiant :
+1. **Message 'I'** : Le joueur reçoit son identifiant :
 ```c
 sscanf(gbuffer,"I %d", &gId);
 ```
 
-2. Message 'L' : Le joueur reçoit la liste des joueurs :
+2. **Message 'L'** : Le joueur reçoit la liste des joueurs :
 ```c
 sscanf(gbuffer,"L %s %s %s %s", gNames[0], gNames[1], gNames[2], gNames[3]);
 ```
 
-3. Message 'D' : Le joueur reçoit ses trois cartes :
+3. **Message 'D'** : Le joueur reçoit ses trois cartes :
 ```c
 sscanf(gbuffer,"D %d %d %d", &b[0], &b[1], &b[2]);
 ```
 
-4. Message 'M' : Le joueur reçoit le numéro du joueur courant :
+4. **Message 'M'** : Le joueur reçoit le numéro du joueur courant :
 ```c
 sscanf(gbuffer,"M %d", &id);
 goEnabled = (id == gId) ? 1 : 0;
 ```
 Cette partie est importante car elle permet d'activer le bouton "Go" uniquement quand c'est au tour du joueur.
 
-5. Message 'V' : Le joueur reçoit une valeur pour tableCartes :
+5. **Message 'V'** : Le joueur reçoit une valeur pour tableCartes :
 ```c
 int result;
 sscanf(gbuffer,"V %d %d %d ", &i, &j, &result);
@@ -169,14 +195,15 @@ if (tableCartes[i][j]==-1 || tableCartes[i][j]==100) tableCartes[i][j]=result;
 
 ### Utilisation des sockets et des threads
 
-Le client utilise un thread séparé (fn_serveur_tcp) pour écouter les messages provenant du serveur. Ce thread crée un socket serveur sur lequel le client écoute les messages entrants. 
+Le client utilise un thread séparé (`fn_serveur_tcp`) pour écouter les messages provenant du serveur. Ce thread crée un socket serveur sur lequel le client écoute les messages entrants. 
+
 Quand un message est reçu, il est stocké dans la variable gbuffer et le drapeau synchro est mis à 1 pour signaler au thread principal qu'un nouveau message est disponible.
 
 Pour envoyer des messages au serveur, j'utilise la fonction `sendMessageToServer()` qui crée un socket client, se connecte au serveur, envoie le message et ferme la connexion.
 
 La synchronisation entre les deux threads est assurée par la variable synchro et un mutex (`PTHREAD_MUTEX_INITIALIZER`) qui protège les accès concurrents à gbuffer.
 
-## Explication sur le Makefile
+## Explications sur le Makefile
 
 Ce `Makefile` a été conçu pour faire les étapes suivantes :
 1. **Création du dossier `dist`** : Si le dossier n'existe pas, il est créé pour stocker les exécutables.
@@ -229,7 +256,8 @@ Lance le serveur et plusieurs clients :
 - Serveur : ```@./$(TARGET) $(PORT) &```
 Lance le serveur en arrière-plan (&) sur le port défini par $(PORT).
 - Clients : ```@./$(CLIENT) ... &```
-Lance chaque client en arrière-plan, en se connectant au serveur sur le port $(PORT). Sous la forme : `./sh13 <IP address server> <Server port> <IP address client> <Client port> <Username>`
+Lance chaque client en arrière-plan, en se connectant au serveur sur le port $(PORT), sous la forme : `./sh13 <IP address server> <Server port> <IP address client> <Client port> <Username>`
+
 Chaque client utilise un port différent, calculé avec une commande shell en incrémentant de 1.
 wait : Attend que tous les processus en arrière-plan se terminent avant de continuer.
 

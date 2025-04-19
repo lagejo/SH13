@@ -1,6 +1,6 @@
 TARGET = dist/server
 CLIENT = dist/sh13
-PORT = 44000
+PORT = 43529
 
 SOURCES = $(wildcard *.c)
 
