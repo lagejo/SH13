@@ -397,25 +397,22 @@ int main(int argc, char *argv[])
 				break;
                 	case 'O':
 					// RAJOUTER DU CODE ICI
+
 					//un joueur a demande qui avait des symboles particuliers
-					
-					int objet;
 					// qui a fait la demande et quel symbole
-					sscanf(buffer,"O %d %d", &id, &objet);
-					
+                    sscanf(buffer, "O %d %d", &id, &n);
+
 					// parcourir les clients
-					for(int j=0; j<4; j++)
-					{
-						if(j==id);//si on lit la ligne du joueur qui joue, on ne fait rien
-						else 
-						{
-							if(tableCartes[j][i] == objet)
-								// afficher la colonne de tableCartes correspondant au symbole demandé
-								sprintf(reply,"V %d %d 0", j, i);
-							else
-								sprintf(reply,"V %d %d 100", j, i);
+					for (i = 0 ; i < 4 ; i++) {
+						if (i != id) {
+							if (tableCartes[i][n] > 0) {
+								sprintf(reply, "V %d %d 100", i, n);
+							}
+							else {
+								sprintf(reply, "V %d %d 0", i, n);
+							}
+							broadcastMessage(reply);
 						}
-						broadcastMessage(reply);						
 					}
 					
 					joueurCourant++;

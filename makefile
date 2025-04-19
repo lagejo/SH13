@@ -1,5 +1,6 @@
 TARGET = dist/server
 CLIENT = dist/sh13
+PORT = 44000
 
 SOURCES = $(wildcard *.c)
 
@@ -14,11 +15,11 @@ $(TARGET): $(SOURCES)
 	@gcc -o dist/server server.c
 
 run: $(TARGET)
-	@./$(TARGET) 32000 &
-	@./$(CLIENT) 127.0.0.1 32000 127.0.0.1 32001 Player1 &
-	@./$(CLIENT) 127.0.0.1 32000 127.0.0.2 32002 Player2 &
-	@./$(CLIENT) 127.0.0.1 32000 127.0.0.3 32003 Player3 &
-	@./$(CLIENT) 127.0.0.1 32000 127.0.0.4 32004 Player4 &
+	@./$(TARGET) $(PORT)  &
+	@./$(CLIENT) 127.0.0.1 $(PORT)  127.0.0.1 $(shell echo $$(($(PORT) + 1))) Alice &
+	@./$(CLIENT) 127.0.0.1 $(PORT)  127.0.0.2 $(shell echo $$(($(PORT) + 2))) Bob &
+	@./$(CLIENT) 127.0.0.1 $(PORT)  127.0.0.3 $(shell echo $$(($(PORT) + 3))) Charlie &
+	@./$(CLIENT) 127.0.0.1 $(PORT)  127.0.0.4 $(shell echo $$(($(PORT) + 4))) Daniel &
 	@wait
 
 clean:

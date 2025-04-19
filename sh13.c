@@ -126,7 +126,7 @@ void sendMessageToServer(char *ipAddress, int portno, char *mess)
 int main(int argc, char ** argv)
 {
 	int ret;
-	int i,j,k;
+	int i,j;
 
     int quit = 0;
     SDL_Event event;
@@ -289,6 +289,7 @@ int main(int argc, char ** argv)
 						// RAJOUTER DU CODE ICI
 						// Envoyer la commande au serveur
 						sendMessageToServer(gServerIpAddress, gServerPort, sendBuffer);
+						goEnabled = 0;
 
 					}
 					else if ((objetSel!=-1) && (joueurSel!=-1))
@@ -300,6 +301,7 @@ int main(int argc, char ** argv)
 						// RAJOUTER DU CODE ICI
 						// Envoyer la commande au serveur
 						sendMessageToServer(gServerIpAddress, gServerPort, sendBuffer);
+						goEnabled = 0;
 
 					}
 				}
@@ -327,22 +329,20 @@ int main(int argc, char ** argv)
 			case 'I':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"I %d", &gId);  // recupere la partie entiere de gbuffer
-				//affichage dans le terminal
-   				printf("Votre Id : %d \n",gId);
 
 				break;
 			// Message 'L' : le joueur recoit la liste des joueurs
 			case 'L':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"L %s %s %s %s", gNames[0], gNames[1], gNames[2], gNames[3]);
-				printf("Joueurs connectés : %s %s %s %s \n", gNames[0], gNames[1], gNames[2], gNames[3]);	 // Affiche la liste en sautant 'L'
+				// printf("Joueurs connectés : %s %s %s %s \n", gNames[0], gNames[1], gNames[2], gNames[3]);	 // Affiche la liste en sautant 'L'
 
 				break;
 			// Message 'D' : le joueur recoit ses trois cartes
 			case 'D':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"D %d %d %d", &b[0], &b[1], &b[2]);
-				printf("Vos cartes : %d %d %d \n",b[0], b[1],b[2]);
+				// printf("Vos cartes : %d %d %d \n",b[0], b[1],b[2]);
 
 				break;
 			// Message 'M' : le joueur recoit le n° du joueur courant
@@ -355,9 +355,10 @@ int main(int argc, char ** argv)
 			// Message 'V' : le joueur recoit une valeur de tableCartes
 			case 'V':
 				// RAJOUTER DU CODE ICI
-				sscanf(gbuffer,"V %d %d %d ", &i, &j, &k); 
+				int result;
+				sscanf(gbuffer,"V %d %d %d ", &i, &j, &result); 
 				//A completer
-				if (tableCartes[i][j]==-1 || tableCartes[i][j]==100) tableCartes[i][j]=k;
+				if (tableCartes[i][j]==-1 || tableCartes[i][j]==100) tableCartes[i][j]=result;
 
 				break;
 		}
