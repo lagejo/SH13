@@ -12,9 +12,10 @@ $(TARGET): $(SOURCES)
 	@gcc -o dist/server server.c
 
 run: $(TARGET)
-	@./$(TARGET) 3200
-	@./$(CLIENT) 127.0.0.1 32000 127.0.0.1 32001 Player1
-	@./$(CLIENT) 127.0.0.1 32000 127.0.0.2 32002 Player2
+	@./$(TARGET) 32000 &
+	@./$(CLIENT) 127.0.0.1 32000 127.0.0.1 32001 Player1 &
+	@./$(CLIENT) 127.0.0.1 32000 127.0.0.2 32002 Player2 &
+	@wait
 
 clean:
 	@rm -f $(TARGET)
