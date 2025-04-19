@@ -9,6 +9,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <stdio.h>
+
 
 pthread_t thread_serveur_tcp_id;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -124,7 +126,7 @@ void sendMessageToServer(char *ipAddress, int portno, char *mess)
 int main(int argc, char ** argv)
 {
 	int ret;
-	int i,j;
+	int i,j,k;
 
     int quit = 0;
     SDL_Event event;
@@ -317,6 +319,8 @@ int main(int argc, char ** argv)
         if (synchro==1)
         {
                 printf("consomme |%s|\n",gbuffer);
+				// int joueurCourant, player, object, value;
+
 		switch (gbuffer[0])
 		{
 			// Message 'I' : le joueur recoit son Id
@@ -346,8 +350,7 @@ int main(int argc, char ** argv)
 			case 'M':
 				// RAJOUTER DU CODE ICI
 				sscanf(gbuffer,"M %d", &id);
-				sprintf(tour,"C'est au tour de %s de jouer",gNames[id]); //affichage sur la fenetre de jeu
-				id == gId ? goEnabled = 1 : goEnabled = 0; //goEnabled vaudra 1 si c'est au joueur de jouer 0 sinon
+				goEnabled = (id == gId) ? 1 : 0; //goEnabled vaudra 1 si c'est au joueur de jouer 0 sinon
 				break;
 			// Message 'V' : le joueur recoit une valeur de tableCartes
 			case 'V':
